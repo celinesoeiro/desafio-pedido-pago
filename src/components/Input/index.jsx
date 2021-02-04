@@ -6,7 +6,9 @@ import {
   withStyles,
 } from '@material-ui/core/styles';
 
-import { OutlinedInput, InputLabel, FormControl } from '@material-ui/core';
+import {
+  OutlinedInput, InputLabel, FormControl, FormHelperText,
+} from '@material-ui/core';
 
 const theme = createMuiTheme({
   palette: {
@@ -34,7 +36,7 @@ const PPInput = withStyles({
 
 function CustomInput(props) {
   const {
-    id, label, variant, style, type, size, onChange, value,
+    id, label, variant, style, type, size, onChange, value, error, errorMessage,
   } = props;
 
   return (
@@ -50,7 +52,9 @@ function CustomInput(props) {
           type={type}
           value={value}
           onChange={onChange}
+          error={error}
         />
+        {error ? <FormHelperText id={id}>{errorMessage}</FormHelperText> : ''}
       </PPInput>
     </ThemeProvider>
   );

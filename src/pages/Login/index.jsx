@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-unused-vars */
 import React, { useState, useCallback } from 'react';
 
 // Libs
@@ -8,10 +10,15 @@ import Grid from '@material-ui/core/Grid';
 // Components
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import Toast from '../../components/Toast';
 
 // Assets
 import logo from '../../assets/logo.png';
 import rodapeImg from '../../assets/rodape-direito.png';
+
+// Services
+import api from '../../services/api';
+import { login } from '../../services/auth';
 
 // Styles
 const useStyles = makeStyles(() => (
@@ -103,21 +110,59 @@ const useStyles = makeStyles(() => (
   }
 ));
 
-function Login() {
+function Login(props) {
   const classes = useStyles();
 
   /** STATES */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [openToast, setOpenToast] = useState(false);
+  const [toastKey, setToastKey] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success');
+
+  /** FUNCTIONS */
+  function handleLogin(submittedEmail, submittedPassword) {
+    api.post('/agent/login', {
+      password: submittedPassword,
+      type: 'string',
+      username: submittedEmail,
+    })
+      .then((response) => {
+        const { jwt } = response.data;
+        login(jwt);
+        props.history.push('/categories');
+      })
+      .catch((err) => {
+        setOpenToast(true);
+        setToastKey('loginError');
+        setToastMessage('Algo deu errado. Por favor, revise seus dados.');
+        setToastType('error');
+      });
+  }
 
   /** CALLBACKS */
   const handleSubmit = useCallback(() => {
-    console.log('email', email);
-    console.log('password', password);
+    if (!email || !password) {
+      !email ? setEmailError(true) : setEmailError(false);
+      !password ? setPasswordError(true) : setPasswordError(false);
+    } else {
+      setEmailError(false);
+      setPasswordError(false);
+      handleLogin(email, password);
+    }
   }, [email, password]);
 
   return (
     <div className={classes.root}>
+      <Toast
+        key={toastKey}
+        message={toastMessage}
+        type={toastType}
+        isOpen={openToast}
+      />
       <div className={classes.header}>
         <img src={logo} alt="logo" />
       </div>
@@ -137,10 +182,12 @@ function Login() {
               variant="outlined"
               margin="normal"
               fullWidth
-              label="E-mail"
+              label="E-mail/Usuário"
               required
               size="small"
               value={email}
+              error={emailError}
+              errorMessage="O campo E-mail/Usuário é obrigatório"
               onChange={(event) => setEmail(event.target.value)}
             />
             <Input
@@ -153,6 +200,8 @@ function Login() {
               type="password"
               size="small"
               value={password}
+              error={passwordError}
+              errorMessage="O campo Senha é obrigatório"
               onChange={(event) => setPassword(event.target.value)}
             />
             <Button
@@ -160,7 +209,7 @@ function Login() {
               fullWidth
               variant="contained"
               color="primary"
-              text="cadastrar"
+              text="continuar"
               onClick={handleSubmit}
             />
           </form>

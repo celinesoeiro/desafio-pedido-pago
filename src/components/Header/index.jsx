@@ -28,10 +28,11 @@ const useStyles = makeStyles(() => (
     header: {
       display: 'flex',
       flexDirection: 'column',
-      height: '64px',
+      height: '104px',
       justifyContent: 'space-between',
       color: '#424242',
       letterSpacing: '0.03em',
+      marginBottom: '24px',
     },
     upperHeader: {
       display: 'flex',

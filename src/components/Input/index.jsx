@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 import {
@@ -7,7 +8,7 @@ import {
 } from '@material-ui/core/styles';
 
 import {
-  OutlinedInput, InputLabel, FormControl, FormHelperText,
+  OutlinedInput, InputLabel, FormControl, FormHelperText, InputAdornment, IconButton,
 } from '@material-ui/core';
 
 const theme = createMuiTheme({
@@ -15,14 +16,17 @@ const theme = createMuiTheme({
     primary: {
       main: '#22E0A1',
     },
+    secondary: {
+      main: '#A3A3A3',
+    },
   },
 });
 
 const PPInput = withStyles({
   root: {
     margin: '0px 0px 23px',
-    borderRadius: '10px',
     color: '#424242',
+    borderRadius: (props) => props.borderRadius,
     '& .MuiInputLabel-formControl': {
       fontFamily: 'Poppins',
       fontSize: '14px',
@@ -32,16 +36,38 @@ const PPInput = withStyles({
       alignSelf: 'center',
     },
   },
+
 })(FormControl);
 
 function CustomInput(props) {
   const {
-    id, label, variant, style, type, size, onChange, value, error, errorMessage,
+    id,
+    label,
+    variant,
+    style,
+    type,
+    size,
+    onChange,
+    value,
+    error,
+    errorMessage,
+    borderRadius,
+    width,
+    height,
+    icon,
+    inputIconButtonFunction,
+    placeHolder,
+    fontSize,
   } = props;
 
   return (
     <ThemeProvider theme={theme}>
-      <PPInput variant={variant} size={size} fullWidth>
+      <PPInput
+        variant={variant}
+        size={size}
+        fullWidth
+
+      >
         <InputLabel>{label}</InputLabel>
         <OutlinedInput
           id={id}
@@ -53,6 +79,25 @@ function CustomInput(props) {
           value={value}
           onChange={onChange}
           error={error}
+          style={{
+            borderRadius,
+            fontFamily: 'Poppins',
+            width,
+            fontSize,
+            height,
+          }}
+          endAdornment={icon ? (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={inputIconButtonFunction}
+                edge="end"
+                size="small"
+              >
+                {icon}
+              </IconButton>
+            </InputAdornment>
+          ) : null}
+          placeholder={placeHolder || null}
         />
         {error ? <FormHelperText id={id}>{errorMessage}</FormHelperText> : ''}
       </PPInput>

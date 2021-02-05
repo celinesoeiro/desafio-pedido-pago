@@ -181,6 +181,7 @@ function Login(props) {
               id="email"
               variant="outlined"
               margin="normal"
+              borderRadius="10px"
               fullWidth
               label="E-mail/Usuário"
               required
@@ -194,6 +195,7 @@ function Login(props) {
               id="password"
               variant="outlined"
               margin="normal"
+              borderRadius="10px"
               fullWidth
               label="Senha"
               required

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 // Libs
@@ -27,15 +28,17 @@ const PPButton = withStyles({
     marginTop: '9px',
     marginBottom: '24px',
     fontFamily: 'Poppins',
-    fontSize: '12px',
+    fontSize: (props) => props.fontSize,
     fontWeight: 600,
     boxShadow: 'none',
+    textTransform: 'none',
+    width: (props) => props.width,
   },
 })(Button);
 
 function CustomButton(props) {
   const {
-    text, type, variant, color, onClick,
+    text, type, variant, color, onClick, ...rest
   } = props;
 
   return (
@@ -46,6 +49,7 @@ function CustomButton(props) {
         variant={variant}
         color={color}
         onClick={onClick}
+        {...rest}
       >
         {text}
       </PPButton>

@@ -16,6 +16,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import EditIcon from '@material-ui/icons/Edit';
 import ClearIcon from '@material-ui/icons/Clear';
+import CloseIcon from '@material-ui/icons/Close';
 
 // Components
 import Toast from '../../components/Toast';
@@ -23,6 +24,7 @@ import Header from '../../components/Header';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Table from '../../components/Table';
+import Dialog from '../../components/Dialog';
 
 // Services
 import api from '../../services/api';
@@ -84,6 +86,17 @@ const useStyles = makeStyles(() => (
         marginLeft: '8px',
       },
     },
+    removeMsg: {
+      textAlign: 'center',
+    },
+    removeActions: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      '& button': {
+        margin: '6px 23px 21px 23px',
+      },
+    },
   }
 ));
 
@@ -95,6 +108,10 @@ function Categories() {
   const [toastKey, setToastKey] = useState('');
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('info');
+
+  const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openVisibilityDialog, setOpenVisibilityDialog] = useState(false);
 
   /** EFFECTS */
   useEffect(() => {
@@ -112,24 +129,82 @@ function Categories() {
       });
   }
 
-  function handleChangeCategoryVisibility() {
-    setOpenToast(true);
-    setToastKey('changeVisibility');
-    setToastMessage('Mudar visibilidade');
-    setToastType('warning');
+  function createCategory(data) {
+    api.post('/store/category/', {
+      callcenter: {
+        from: 0,
+        status: true,
+      },
+      description: 'string',
+      ecommerce: {
+        from: 0,
+        status: true,
+      },
+      keywords: [
+        'string',
+      ],
+      keywords_concat: 'string',
+      logo: 'string',
+      logo_content_type: 'string',
+      name: 'string',
+      parent_id: 0,
+      position: 0,
+      products: [
+        'string',
+      ],
+      store_id: 'string',
+      subcategories: [
+        {},
+      ],
+      visible: true,
+    })
+      .then((response) => {
+        console.log('response.data', response.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }
 
-  function handleEditCategory() {
-    setOpenToast(true);
-    setToastKey('edit');
-    setToastMessage('Editar');
+  function getCategory(id) {
+    api.get(`/store/category/${id}`)
+      .then((response) => {
+        console.log('response.data', response.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }
 
-  function handleRemoveCategory() {
-    setOpenToast(true);
-    setToastKey('remove');
-    setToastMessage('remover');
-    setToastType('warning');
+  function deleteCategory(id) {
+    api.delete(`/store/category/${id}`)
+      .then((response) => {
+        console.log('response.data', response.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
+  }
+
+  function updateCategory(data) {
+    const { id, visible } = data;
+    api.put(`/store/category/${id}`, {
+      visible,
+      callcenter: {
+        from: 0,
+        status: true,
+      },
+      ecommerce: {
+        from: 0,
+        status: false,
+      },
+    })
+      .then((response) => {
+        console.log('response.data', response.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }
 
   function handleSearchCategory() {
@@ -153,24 +228,32 @@ function Categories() {
       <div className={classes.tableActions}>
         <IconButton
           size="small"
-          onClick={handleChangeCategoryVisibility}
+          onClick={() => setOpenVisibilityDialog(true)}
         >
           <VisibilityOffIcon color="secondary" />
         </IconButton>
         <IconButton
           size="small"
-          onClick={handleEditCategory}
+          onClick={() => setOpenEditDialog(true)}
         >
           <EditIcon color="secondary" />
         </IconButton>
         <IconButton
           size="small"
-          onClick={handleRemoveCategory}
+          onClick={() => setOpenRemoveDialog(true)}
         >
           <ClearIcon color="secondary" />
         </IconButton>
       </div>
     );
+  }
+
+  function handleClose(type) {
+    if (type === 'remove') {
+      setOpenRemoveDialog(false);
+    } else if (type === 'visibility') {
+      setOpenVisibilityDialog(false);
+    }
   }
 
   /** MEMOS */
@@ -224,6 +307,47 @@ function Categories() {
         message={toastMessage}
         type={toastType}
         isOpen={openToast}
+      />
+      <Dialog
+        open={openRemoveDialog}
+        close={() => handleClose('remove')}
+        title="Remover categoria"
+        content={(
+          <div className={classes.removeMsg}>
+            <p>
+              Tem certeza de que deseja remover a categoria
+              {' '}
+              <b>Emagrecimento</b>
+              ?
+            </p>
+            <p>Esta ação não poderá ser desfeita</p>
+          </div>
+        )}
+        actions={(
+          <div className={classes.removeActions}>
+            <Button
+              onClick={() => handleClose('remove')}
+              color="primary"
+              type="button"
+              variant="outlined"
+              text="remover permanentemente"
+              fontSize="14px"
+            />
+            <Button
+              onClick={() => handleClose('remove')}
+              color="primary"
+              type="button"
+              variant="contained"
+              text="manter categoria"
+              fontSize="14px"
+            />
+          </div>
+        )}
+      />
+      <Dialog
+        open={openVisibilityDialog}
+        close={() => handleClose('visibility')}
+        title="Editar visibilidade"
       />
       <Header pageTitle="Lista de categorias">
         <Breadcrumbs separator="›" aria-label="breadcrumb">

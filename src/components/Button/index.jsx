@@ -33,6 +33,7 @@ const PPButton = withStyles({
     boxShadow: 'none',
     textTransform: 'none',
     width: (props) => props.width,
+    whiteSpace: 'nowrap',
   },
 })(Button);
 

@@ -2,7 +2,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState, useEffect, useMemo, useCallback,
+} from 'react';
 
 // Libs
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +13,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 
 // Icons
 import SearchIcon from '@material-ui/icons/Search';
@@ -95,6 +100,32 @@ const useStyles = makeStyles(() => (
     actionButtons: {
       color: '#A3A3A4',
     },
+    visibilityMsg: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      '& .MuiTypography-body1': {
+        fontFamily: 'Poppins',
+        fontSize: '12px',
+        color: '#424242',
+
+      },
+    },
+    visibilityActions: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      '& button': {
+        margin: '6px 23px 21px 23px',
+      },
+    },
+    container: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    textField: {
+      width: '100%',
+    },
   }
 ));
 
@@ -110,6 +141,11 @@ function Categories(props) {
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
   const [tableData, setTableData] = useState([]);
+
+  const [ecommerce, setEcommerce] = useState(false);
+  const [callcenter, setCallcenter] = useState(false);
+  const [ecommerceDate, setEcommerceDate] = useState(null);
+  const [callcenterDate, setCallcenterDate] = useState(null);
 
   const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -168,7 +204,6 @@ function Categories(props) {
   function deleteCategory(id) {
     api.delete(`/store/category/${id}`)
       .then((response) => {
-        console.log('response.data', response.data);
         setOpenToast(true);
         setToastType('success');
         setToastKey(`deleteCategory:success:${response.data.deleted}`);
@@ -177,32 +212,39 @@ function Categories(props) {
         listCategories();
       })
       .catch((err) => {
-        console.log('err', err);
         setOpenToast(true);
         setToastType('error');
         setToastKey(`deleteCategory:error:${err.name}`);
         setToastMessage('Não foi possível deletar essa categoria. Tente novamente');
+        setOpenRemoveDialog(false);
       });
   }
 
   function updateCategory(data) {
-    const { id, visible } = data;
+    const { id } = data;
     api.put(`/store/category/${id}`, {
-      visible,
       callcenter: {
-        from: 0,
-        status: true,
+        from: data.callcenterDays,
+        status: data.callcenter,
       },
       ecommerce: {
-        from: 0,
-        status: false,
+        from: data.ecommerceDays,
+        status: data.ecommerce,
       },
     })
-      .then((response) => {
-        console.log('response.data', response.data);
+      .then(() => {
+        setOpenToast(true);
+        setToastType('success');
+        setToastKey('updateCategory:success');
+        setToastMessage('Visibilidade da categoria atualizada com sucesso.');
+        setOpenVisibilityDialog(false);
       })
       .catch((err) => {
-        console.log('err', err);
+        setOpenToast(true);
+        setToastType('error');
+        setToastKey(`updateCategory:error:${err.name}`);
+        setToastMessage('Não foi possível alterar a visibilidade dessa categoria. Tente novamente');
+        setOpenVisibilityDialog(false);
       });
   }
 
@@ -289,6 +331,36 @@ function Categories(props) {
     [],
   );
 
+  /** CALLBACKS */
+  const handleEditCategoryVisibility = useCallback(() => {
+    const today = new Date();
+    let diffDaysEcommerce = 0;
+    let diffDaysCallcenter = 0;
+
+    if (ecommerce) {
+      const dateEcommerce = new Date(ecommerceDate);
+      const diffItimeEcommerce = Math.abs(dateEcommerce - today);
+      diffDaysEcommerce = Math.ceil(diffItimeEcommerce / (1000 * 60 * 60 * 24));
+    }
+
+    if (callcenter) {
+      const dateCallcenter = new Date(callcenterDate);
+      const diffTimeCallcenter = Math.abs(dateCallcenter - today);
+      diffDaysCallcenter = Math.ceil(diffTimeCallcenter / (1000 * 60 * 60 * 24));
+    }
+
+    const data = {
+      id: categoryId,
+      ecommerceDays: diffDaysEcommerce,
+      ecommerce,
+      callcenter,
+      callcenterDays: diffDaysCallcenter,
+    };
+    console.log('data', data);
+
+    updateCategory(data);
+  }, [ecommerceDate, ecommerce, callcenter, callcenterDate, categoryId]);
+
   return (
     <div className={classes.root}>
       <Toast
@@ -336,7 +408,86 @@ function Categories(props) {
       <Dialog
         open={openVisibilityDialog}
         close={() => handleClose('visibility')}
-        title="Editar visibilidade"
+        title="Alterar visibilidade"
+        content={(
+          <div className={classes.visibilityMsg}>
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={ecommerce}
+                  onChange={(event) => setEcommerce(event.target.checked)}
+                  name="ecommerce"
+                  color="primary"
+                />
+            )}
+              label="Visibilidade em E-commerce a partir de:"
+            />
+            <form className={classes.container} noValidate>
+              <TextField
+                id="ecommerceDate"
+                label="Data"
+                type="date"
+                className={classes.textField}
+                margin="normal"
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={ecommerceDate}
+                onChange={(event) => setEcommerceDate(event.target.value)}
+                disabled={!ecommerce}
+              />
+            </form>
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={callcenter}
+                  onChange={(event) => setCallcenter(event.target.checked)}
+                  name="callcenter"
+                  color="primary"
+                />
+            )}
+              label="Visibilidade em Call center a partir de:"
+            />
+            <form className={classes.container} noValidate>
+              <TextField
+                id="callcenterDate"
+                label="Data"
+                type="date"
+                className={classes.textField}
+                margin="normal"
+                defaultValue={null}
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={callcenterDate}
+                onChange={(event) => setCallcenterDate(event.target.value)}
+                disabled={!callcenter}
+              />
+            </form>
+          </div>
+        )}
+        actions={(
+          <div className={classes.visibilityActions}>
+            <Button
+              onClick={() => handleClose('visibility')}
+              color="primary"
+              type="button"
+              variant="outlined"
+              text="cancelar"
+              fontSize="14px"
+            />
+            <Button
+              onClick={handleEditCategoryVisibility}
+              color="primary"
+              type="button"
+              variant="contained"
+              text="salvar"
+              fontSize="14px"
+            />
+          </div>
+        )}
       />
       <Header pageTitle="Lista de categorias">
         <Breadcrumbs separator="›" aria-label="breadcrumb">

@@ -24,7 +24,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 );
 
 export default function Routes() {
-  console.log('isAuthenticated', isAuthenticated());
   return (
     <BrowserRouter>
       <Switch>

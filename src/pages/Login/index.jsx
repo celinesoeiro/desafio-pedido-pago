@@ -127,7 +127,7 @@ function Login(props) {
   function handleLogin(submittedEmail, submittedPassword) {
     api.post('/agent/login', {
       password: submittedPassword,
-      type: 'string',
+      type: 'agent',
       username: submittedEmail,
     })
       .then((response) => {

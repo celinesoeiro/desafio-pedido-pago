@@ -16,7 +16,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import EditIcon from '@material-ui/icons/Edit';
 import ClearIcon from '@material-ui/icons/Clear';
-import CloseIcon from '@material-ui/icons/Close';
 
 // Components
 import Toast from '../../components/Toast';
@@ -97,10 +96,13 @@ const useStyles = makeStyles(() => (
         margin: '6px 23px 21px 23px',
       },
     },
+    actionButtons: {
+      color: '#A3A3A4',
+    },
   }
 ));
 
-function Categories() {
+function Categories(props) {
   const classes = useStyles();
 
   /** STATES */
@@ -115,49 +117,12 @@ function Categories() {
 
   /** EFFECTS */
   useEffect(() => {
-    // listCategories();
+    listCategories();
   }, []);
 
   /** FUNCTIONS */
   function listCategories() {
     api.get('/store/category')
-      .then((response) => {
-        console.log('response.data', response.data);
-      })
-      .catch((err) => {
-        console.log('err', err);
-      });
-  }
-
-  function createCategory(data) {
-    api.post('/store/category/', {
-      callcenter: {
-        from: 0,
-        status: true,
-      },
-      description: 'string',
-      ecommerce: {
-        from: 0,
-        status: true,
-      },
-      keywords: [
-        'string',
-      ],
-      keywords_concat: 'string',
-      logo: 'string',
-      logo_content_type: 'string',
-      name: 'string',
-      parent_id: 0,
-      position: 0,
-      products: [
-        'string',
-      ],
-      store_id: 'string',
-      subcategories: [
-        {},
-      ],
-      visible: true,
-    })
       .then((response) => {
         console.log('response.data', response.data);
       })
@@ -230,19 +195,19 @@ function Categories() {
           size="small"
           onClick={() => setOpenVisibilityDialog(true)}
         >
-          <VisibilityOffIcon color="secondary" />
+          <VisibilityOffIcon className={classes.actionButtons} />
         </IconButton>
         <IconButton
           size="small"
           onClick={() => setOpenEditDialog(true)}
         >
-          <EditIcon color="secondary" />
+          <EditIcon className={classes.actionButtons} />
         </IconButton>
         <IconButton
           size="small"
           onClick={() => setOpenRemoveDialog(true)}
         >
-          <ClearIcon color="secondary" />
+          <ClearIcon className={classes.actionButtons} />
         </IconButton>
       </div>
     );
@@ -384,6 +349,7 @@ function Categories() {
               color="primary"
               text="criar nova categoria"
               fontSize="14px"
+              onClick={() => props.history.push('/new-category')}
             />
           </div>
         </div>

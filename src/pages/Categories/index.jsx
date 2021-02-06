@@ -356,7 +356,6 @@ function Categories(props) {
       callcenter,
       callcenterDays: diffDaysCallcenter,
     };
-    console.log('data', data);
 
     updateCategory(data);
   }, [ecommerceDate, ecommerce, callcenter, callcenterDate, categoryId]);

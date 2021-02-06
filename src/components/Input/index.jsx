@@ -67,7 +67,6 @@ function CustomInput(props) {
         variant={variant}
         size={size}
         fullWidth
-
       >
         <InputLabel>{label}</InputLabel>
         <OutlinedInput

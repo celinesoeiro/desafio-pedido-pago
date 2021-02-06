@@ -26,6 +26,7 @@ const PPButton = withStyles({
     padding: '8px 40px',
     borderRadius: '99px',
     marginTop: '9px',
+    // marginLeft: '9px',
     marginBottom: '24px',
     fontFamily: 'Poppins',
     fontSize: (props) => props.fontSize,
@@ -46,7 +47,7 @@ function CustomButton(props) {
     <ThemeProvider theme={theme}>
       <PPButton
         type={type}
-        fullWidth
+        // fullWidth
         variant={variant}
         color={color}
         onClick={onClick}

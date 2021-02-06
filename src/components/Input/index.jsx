@@ -58,6 +58,7 @@ function CustomInput(props) {
     inputIconButtonFunction,
     placeHolder,
     fontSize,
+    ...rest
   } = props;
 
   return (
@@ -98,6 +99,7 @@ function CustomInput(props) {
             </InputAdornment>
           ) : null}
           placeholder={placeHolder || null}
+          {...rest}
         />
         {error ? <FormHelperText id={id}>{errorMessage}</FormHelperText> : ''}
       </PPInput>

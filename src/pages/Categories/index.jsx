@@ -262,7 +262,7 @@ function Categories(props) {
 
   function handleEdit(id) {
     setCategoryId(id);
-    setOpenEditDialog(true);
+    props.history.push(`/category/${id}`);
   }
 
   function handleDelete(id) {
@@ -522,6 +522,7 @@ function Categories(props) {
               type="button"
               variant="contained"
               color="primary"
+              fullWidth
               text="criar nova categoria"
               fontSize="14px"
               onClick={() => props.history.push('/new-category')}

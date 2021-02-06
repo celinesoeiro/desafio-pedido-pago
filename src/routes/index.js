@@ -8,6 +8,7 @@ import {
 import Login from '../pages/Login';
 import Categories from '../pages/Categories';
 import CreateCategory from '../pages/Categories/CreateCategory';
+import EditCategory from '../pages/Categories/EditCategory';
 
 // Auth
 import { isAuthenticated } from '../services/auth';
@@ -30,6 +31,7 @@ export default function Routes() {
         <Route path="/login" component={Login} />
         <PrivateRoute path="/categories" component={Categories} />
         <PrivateRoute path="/new-category" component={CreateCategory} />
+        <PrivateRoute path="/category/:id" component={EditCategory} />
       </Switch>
     </BrowserRouter>
   );

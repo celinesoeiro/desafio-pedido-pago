@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-unused-vars */
@@ -28,17 +29,12 @@ import Dialog from '../../components/Dialog';
 // Services
 import api from '../../services/api';
 
-// Assets
-import emagrecimento from '../../assets/emagrecimento.png';
-import beleza from '../../assets/beleza.png';
-import desempenho from '../../assets/desempenho-fisico.png';
-import estar from '../../assets/bem-estar.png';
-
 // Styles
 const useStyles = makeStyles(() => (
   {
     root: {
       flexGrow: 1,
+      marginBottom: '24px',
     },
     pageHeader: {
       display: 'flex',
@@ -111,6 +107,10 @@ function Categories(props) {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('info');
 
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState(null);
+  const [tableData, setTableData] = useState([]);
+
   const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openVisibilityDialog, setOpenVisibilityDialog] = useState(false);
@@ -120,21 +120,45 @@ function Categories(props) {
     listCategories();
   }, []);
 
+  useEffect(() => {
+    if (categories.items) {
+      const arr = [];
+      categories.items.map((category) => {
+        const data = {
+          categoryName: <CategoryName img={category.logo} name={category.name} />,
+          createdAt: category.created_at,
+          actions: <TableButtons id={category.id} />,
+        };
+        arr.push(data);
+      });
+      setTableData(arr);
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    if (categoryId) {
+      getCategory(categoryId);
+    }
+  }, [categoryId]);
+
   /** FUNCTIONS */
   function listCategories() {
     api.get('/store/category')
       .then((response) => {
-        console.log('response.data', response.data);
+        setCategories(response.data);
       })
       .catch((err) => {
-        console.log('err', err);
+        setOpenToast(true);
+        setToastType('error');
+        setToastKey(`listCategory:error:${err.name}`);
+        setToastMessage('Não foi possível listas as categorias.');
       });
   }
 
   function getCategory(id) {
     api.get(`/store/category/${id}`)
       .then((response) => {
-        console.log('response.data', response.data);
+        console.log('getCategory response.data', response.data);
       })
       .catch((err) => {
         console.log('err', err);
@@ -145,9 +169,19 @@ function Categories(props) {
     api.delete(`/store/category/${id}`)
       .then((response) => {
         console.log('response.data', response.data);
+        setOpenToast(true);
+        setToastType('success');
+        setToastKey(`deleteCategory:success:${response.data.deleted}`);
+        setToastMessage('Categoria deletada com sucesso.');
+        setOpenRemoveDialog(false);
+        listCategories();
       })
       .catch((err) => {
         console.log('err', err);
+        setOpenToast(true);
+        setToastType('error');
+        setToastKey(`deleteCategory:error:${err.name}`);
+        setToastMessage('Não foi possível deletar essa categoria. Tente novamente');
       });
   }
 
@@ -179,33 +213,48 @@ function Categories(props) {
     setToastType('info');
   }
 
+  function handleVisibility(id) {
+    setCategoryId(id);
+    setOpenVisibilityDialog(true);
+  }
+
+  function handleEdit(id) {
+    setCategoryId(id);
+    setOpenEditDialog(true);
+  }
+
+  function handleDelete(id) {
+    setCategoryId(id);
+    setOpenRemoveDialog(true);
+  }
+
   function CategoryName({ img, name }) {
     return (
       <div className={classes.tableCategories}>
-        <img src={img} alt={name} />
+        <img src={img} alt={name} width="32px" />
         <span>{name}</span>
       </div>
     );
   }
 
-  function TableButtons() {
+  function TableButtons({ id }) {
     return (
       <div className={classes.tableActions}>
         <IconButton
           size="small"
-          onClick={() => setOpenVisibilityDialog(true)}
+          onClick={() => handleVisibility(id)}
         >
           <VisibilityOffIcon className={classes.actionButtons} />
         </IconButton>
         <IconButton
           size="small"
-          onClick={() => setOpenEditDialog(true)}
+          onClick={() => handleEdit(id)}
         >
           <EditIcon className={classes.actionButtons} />
         </IconButton>
         <IconButton
           size="small"
-          onClick={() => setOpenRemoveDialog(true)}
+          onClick={() => handleDelete(id)}
         >
           <ClearIcon className={classes.actionButtons} />
         </IconButton>
@@ -240,31 +289,6 @@ function Categories(props) {
     [],
   );
 
-  const tableData = useMemo(
-    () => [
-      {
-        categoryName: <CategoryName img={emagrecimento} name="Emagrecimento" />,
-        createdAt: '22/02/2020',
-        actions: <TableButtons />,
-      },
-      {
-        categoryName: <CategoryName img={beleza} name="Beleza" />,
-        createdAt: '01/01/2020',
-        actions: <TableButtons />,
-      },
-      {
-        categoryName: <CategoryName img={desempenho} name="Desempenho Físico" />,
-        createdAt: '24/01/2020',
-        actions: <TableButtons />,
-      },
-      {
-        categoryName: <CategoryName img={estar} name="Bem-estar" />,
-        createdAt: '16/03/2020',
-        actions: <TableButtons />,
-      },
-    ],
-  );
-
   return (
     <div className={classes.root}>
       <Toast
@@ -291,7 +315,7 @@ function Categories(props) {
         actions={(
           <div className={classes.removeActions}>
             <Button
-              onClick={() => handleClose('remove')}
+              onClick={() => deleteCategory(categoryId)}
               color="primary"
               type="button"
               variant="outlined"

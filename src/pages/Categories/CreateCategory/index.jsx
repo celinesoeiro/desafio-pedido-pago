@@ -109,7 +109,7 @@ function CreateCategory(props) {
         setOpenToast(true);
         setToastType('error');
         setToastKey(`categoryCreated:error:${err.name}`);
-        setToastMessage('Não foi possíve cadastrar a categoria. Tente novamente.');
+        setToastMessage('Não foi possível cadastrar a categoria. Tente novamente.');
       });
   }
 

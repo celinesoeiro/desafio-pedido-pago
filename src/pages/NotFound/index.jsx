@@ -1,23 +1,12 @@
 import React from 'react';
 
 // Libs
-import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 // Icons
 import NotListedLocationIcon from '@material-ui/icons/NotListedLocation';
 
 // Styles
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#22E0A1',
-    },
-    secondary: {
-      main: '#A3A3A3',
-    },
-  },
-});
-
 const useStyles = makeStyles(() => (
   {
     root: {
@@ -48,13 +37,11 @@ function NotFound() {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.root}>
-        <NotListedLocationIcon color="primary" fontSize="large" />
-        <h1>404</h1>
-        <p>Página não encontrada</p>
-      </div>
-    </ThemeProvider>
+    <div className={classes.root}>
+      <NotListedLocationIcon color="primary" fontSize="large" />
+      <h1>404</h1>
+      <p>Página não encontrada</p>
+    </div>
   );
 }
 

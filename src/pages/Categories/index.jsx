@@ -1,7 +1,6 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-unused-vars */
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
@@ -148,7 +147,6 @@ function Categories(props) {
   const [callcenterDate, setCallcenterDate] = useState(null);
 
   const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openVisibilityDialog, setOpenVisibilityDialog] = useState(false);
 
   /** EFFECTS */
@@ -160,9 +158,10 @@ function Categories(props) {
     if (categories.items) {
       const arr = [];
       categories.items.map((category) => {
+        const date = new Date(category.created_at);
         const data = {
           categoryName: <CategoryName img={category.logo} name={category.name} />,
-          createdAt: category.created_at,
+          createdAt: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
           actions: <TableButtons id={category.id} />,
         };
         arr.push(data);
@@ -435,6 +434,9 @@ function Categories(props) {
                 value={ecommerceDate}
                 onChange={(event) => setEcommerceDate(event.target.value)}
                 disabled={!ecommerce}
+                inputProps={{
+                  min: new Date(),
+                }}
               />
             </form>
             <FormControlLabel
@@ -463,6 +465,9 @@ function Categories(props) {
                 value={callcenterDate}
                 onChange={(event) => setCallcenterDate(event.target.value)}
                 disabled={!callcenter}
+                inputProps={{
+                  min: new Date(),
+                }}
               />
             </form>
           </div>

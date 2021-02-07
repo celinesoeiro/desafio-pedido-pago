@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 
 // Libs
-import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
@@ -33,17 +33,6 @@ import Button from '../../../components/Button';
 import Toast from '../../../components/Toast';
 
 // Styles
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      light: lighten(0.1, '#22E0A1'),
-      main: '#22E0A1',
-      dark: darken(0.1, '#22E0A1'),
-      contrastText: '#fff',
-    },
-  },
-});
-
 const useStyles = makeStyles(() => (
   {
     root: {
@@ -181,143 +170,141 @@ function EditCategory(props) {
         type={toastType}
         isOpen={openToast}
       />
-      <ThemeProvider theme={theme}>
-        <Header pageTitle="Gerenciar categoria">
-          <Breadcrumbs separator="›">
-            <Link color="inherit" variant="inherit" href="/categories">
-              Catálogo
-            </Link>
-            <Link color="inherit" variant="inherit" href="/categories">
-              Categorias
-            </Link>
-            <Typography color="inherit" variant="inherit">
-              {name}
-            </Typography>
-          </Breadcrumbs>
-        </Header>
-        <Grid
-          container
-          direction="column"
-          alignContent="stretch"
-        >
-          <Card className={classes.card} variant="outlined">
-            <Grid container>
-              <Grid item xs={3} className={classes.avatar}>
-                <label>
-                  <MuiInput
-                    type="file"
-                    inputProps={{
-                      accept: 'image/*',
+      <Header pageTitle="Gerenciar categoria">
+        <Breadcrumbs separator="›">
+          <Link color="inherit" variant="inherit" href="/categories">
+            Catálogo
+          </Link>
+          <Link color="inherit" variant="inherit" href="/categories">
+            Categorias
+          </Link>
+          <Typography color="inherit" variant="inherit">
+            {name}
+          </Typography>
+        </Breadcrumbs>
+      </Header>
+      <Grid
+        container
+        direction="column"
+        alignContent="stretch"
+      >
+        <Card className={classes.card} variant="outlined">
+          <Grid container>
+            <Grid item xs={3} className={classes.avatar}>
+              <label>
+                <MuiInput
+                  type="file"
+                  inputProps={{
+                    accept: 'image/*',
+                  }}
+                  onChange={handleAddImg}
+                  className={classes.input}
+                  disabled={!edit}
+                />
+                <IconButton component="span">
+                  <Avatar
+                    src={logo}
+                    style={{
+                      margin: '10px',
+                      width: '120px',
+                      height: '120px',
                     }}
-                    onChange={handleAddImg}
-                    className={classes.input}
-                    disabled={!edit}
                   />
-                  <IconButton component="span">
-                    <Avatar
-                      src={logo}
-                      style={{
-                        margin: '10px',
-                        width: '120px',
-                        height: '120px',
-                      }}
-                    />
-                  </IconButton>
-                </label>
+                </IconButton>
+              </label>
 
-              </Grid>
-              <Grid item xs>
-                <Input
-                  height="40px"
-                  fontSize="12px"
-                  label="Nome da categoria"
-                  variant="outlined"
-                  margin="dense"
-                  fullWidth
-                  size="small"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  disabled={!edit}
-                  error={nameError}
-                  errorMessage="O campo Nome da categoria é obrigatório"
-                />
-                <Input
-                  height="40px"
-                  fontSize="12px"
-                  label="Descrição"
-                  variant="outlined"
-                  margin="dense"
-                  fullWidth
-                  size="small"
-                  value={description}
-                  disabled={!edit}
-                  onChange={(event) => setDescription(event.target.value)}
-                />
-                {edit ? (
-                  ''
-                ) : (
-                  <FormControl component="fieldset">
-                    <FormLabel component="legend">Visível em: </FormLabel>
-                    <FormGroup>
-                      <FormControlLabel
-                        control={(
-                          <Checkbox
-                            checked={ecommerce ? !!ecommerce.status : false}
-                            onChange={(event) => setEcommerce(event.target.checked)}
-                            name="ecommerce"
-                            color="primary"
-                            disabled
-                          />
-                      )}
-                        label="E-commerce"
-                      />
-                      <FormControlLabel
-                        control={(
-                          <Checkbox
-                            checked={callcenter ? !!callcenter.status : false}
-                            onChange={(event) => setCallcenter(event.target.checked)}
-                            name="callCenter"
-                            color="primary"
-                            disabled
-                          />
-                      )}
-                        label="Call center"
-                      />
-                    </FormGroup>
-                  </FormControl>
-                )}
-                {edit ? (
-                  <div className={classes.buttons}>
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      color="primary"
-                      text="Cancelar"
-                      onClick={() => setEdit(false)}
+            </Grid>
+            <Grid item xs>
+              <Input
+                height="40px"
+                fontSize="12px"
+                label="Nome da categoria"
+                variant="outlined"
+                margin="dense"
+                fullWidth
+                size="small"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                disabled={!edit}
+                error={nameError}
+                errorMessage="O campo Nome da categoria é obrigatório"
+              />
+              <Input
+                height="40px"
+                fontSize="12px"
+                label="Descrição"
+                variant="outlined"
+                margin="dense"
+                fullWidth
+                size="small"
+                value={description}
+                disabled={!edit}
+                onChange={(event) => setDescription(event.target.value)}
+              />
+              {edit ? (
+                ''
+              ) : (
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Visível em: </FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={(
+                        <Checkbox
+                          checked={ecommerce ? !!ecommerce.status : false}
+                          onChange={(event) => setEcommerce(event.target.checked)}
+                          name="ecommerce"
+                          color="primary"
+                          disabled
+                        />
+                    )}
+                      label="E-commerce"
                     />
-                    <Button
-                      type="button"
-                      variant="contained"
-                      color="primary"
-                      text="Salvar"
-                      onClick={handleSubmit}
+                    <FormControlLabel
+                      control={(
+                        <Checkbox
+                          checked={callcenter ? !!callcenter.status : false}
+                          onChange={(event) => setCallcenter(event.target.checked)}
+                          name="callCenter"
+                          color="primary"
+                          disabled
+                        />
+                    )}
+                      label="Call center"
                     />
-                  </div>
-                ) : (
+                  </FormGroup>
+                </FormControl>
+              )}
+              {edit ? (
+                <div className={classes.buttons}>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    color="primary"
+                    text="Cancelar"
+                    onClick={() => setEdit(false)}
+                  />
                   <Button
                     type="button"
                     variant="contained"
                     color="primary"
-                    fullWidth
-                    text="Editar categoria"
-                    onClick={() => setEdit(true)}
+                    text="Salvar"
+                    onClick={handleSubmit}
                   />
-                )}
-              </Grid>
+                </div>
+              ) : (
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  text="Editar categoria"
+                  onClick={() => setEdit(true)}
+                />
+              )}
             </Grid>
-          </Card>
-        </Grid>
-      </ThemeProvider>
+          </Grid>
+        </Card>
+      </Grid>
     </>
   );
 }

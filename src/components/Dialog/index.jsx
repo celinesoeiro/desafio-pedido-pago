@@ -1,11 +1,7 @@
 import React from 'react';
 
 // Libs
-import {
-  ThemeProvider,
-  createMuiTheme,
-  makeStyles,
-} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -17,17 +13,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import CloseIcon from '@material-ui/icons/Close';
 
 // Styles
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#22E0A1',
-    },
-    secondary: {
-      main: '#A3A3A3',
-    },
-  },
-});
-
 const useStyles = makeStyles(() => (
   {
     dialogTitle: {
@@ -69,28 +54,26 @@ function Dialog(props) {
   } = props;
 
   return (
-    <ThemeProvider theme={theme}>
-      <MUIDialog open={open} onClose={close}>
-        <DialogTitle className={classes.dialogTitle}>
-          <p>{title}</p>
-          {close ? (
-            <IconButton
-              className={classes.closeButton}
-              onClick={close}
-              size="small"
-            >
-              <CloseIcon />
-            </IconButton>
-          ) : null}
-        </DialogTitle>
-        <DialogContent className={classes.dialogContent}>
-          {content}
-        </DialogContent>
-        <DialogActions>
-          {actions}
-        </DialogActions>
-      </MUIDialog>
-    </ThemeProvider>
+    <MUIDialog open={open} onClose={close}>
+      <DialogTitle className={classes.dialogTitle}>
+        <p>{title}</p>
+        {close ? (
+          <IconButton
+            className={classes.closeButton}
+            onClick={close}
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+      <DialogContent className={classes.dialogContent}>
+        {content}
+      </DialogContent>
+      <DialogActions>
+        {actions}
+      </DialogActions>
+    </MUIDialog>
   );
 }
 

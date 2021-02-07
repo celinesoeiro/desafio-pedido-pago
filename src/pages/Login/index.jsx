@@ -180,7 +180,6 @@ function Login(props) {
             <Input
               id="email"
               variant="outlined"
-              margin="normal"
               borderRadius="10px"
               fullWidth
               label="E-mail/Usuário"
@@ -194,7 +193,6 @@ function Login(props) {
             <Input
               id="password"
               variant="outlined"
-              margin="normal"
               borderRadius="10px"
               fullWidth
               label="Senha"
